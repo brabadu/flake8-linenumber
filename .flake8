@@ -1,0 +1,7 @@
+[flake8]
+
+max-complexity = 10
+
+linenumbers =
+    ./uaprom/lib/bl/bl_company.py=5000
+    ./uaprom/lib/bl/bl_product.py=4000
