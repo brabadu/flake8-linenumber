@@ -1,6 +1,8 @@
 import sys
 from enum import Enum
+from pathlib import Path
 from flake8.formatting.default import Default
+from flake8.utils import parse_unified_diff
 
 if sys.version_info < (3, 8):  # pragma: no cover (<PY38)
     import importlib_metadata
@@ -14,7 +16,7 @@ class LineNumberErrors(Enum):
 
 def config_parser(linenumber_config):
     size_pairs = map(lambda s: s.split('='), linenumber_config)
-    return {filename: int(size) for filename, size in size_pairs}
+    return {Path(filename): int(size) for filename, size in size_pairs}
 
 
 class LineNumberPlugin:
@@ -23,7 +25,11 @@ class LineNumberPlugin:
 
     def __init__(self, tree, total_lines, filename):
         self.total_lines = total_lines
-        self.filename = filename
+        self.filename = Path(filename)
+        self.last_changed_lines = {
+            Path(f): max(changed_lines)
+            for f, changed_lines in parse_unified_diff().items()
+        }
 
     @classmethod
     def add_options(cls, options_manager):
@@ -39,6 +45,7 @@ class LineNumberPlugin:
     @classmethod
     def parse_options(cls, options):
         cls.filesizes = config_parser(options.linenumbers)
+        cls.diff = options.diff
 
     def run(self):
         filesize_limit = self.filesizes.get(self.filename)
@@ -48,19 +55,12 @@ class LineNumberPlugin:
                 limit=filesize_limit,
                 total_lines=self.total_lines
             )
-            for i in range(self.total_lines):
-                yield (i + 1, 0, message, 1)
 
+            # report error on last line of the file
+            err_line = self.total_lines - 1
 
-class LineNumberFromat(Default):
-    def after_init(self):
-        self.filenames_already_printed = set()
-        self.filesizes = config_parser(self.options.linenumbers)
+            # if flake is run on diff, then report on last changed line
+            if self.diff:
+                err_line = self.last_changed_lines[self.filename]
 
-    def format(self, error):
-        if error.code != LineNumberErrors.L001.name:
-            return super(LineNumberFromat, self).format(error)
-
-        if error.filename not in self.filenames_already_printed:
-            self.filenames_already_printed.add(error.filename)
-            return super(LineNumberFromat, self).format(error)
+            yield (err_line, 0, message, 1)
