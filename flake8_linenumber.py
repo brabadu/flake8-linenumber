@@ -1,7 +1,6 @@
 import sys
 from enum import Enum
 from pathlib import Path
-from flake8.formatting.default import Default
 from flake8.utils import parse_unified_diff
 
 if sys.version_info < (3, 8):  # pragma: no cover (<PY38)
@@ -29,6 +28,7 @@ class LineNumberPlugin:
         self.last_changed_lines = {
             Path(f): max(changed_lines)
             for f, changed_lines in parse_unified_diff().items()
+            if changed_lines
         }
 
     @classmethod
