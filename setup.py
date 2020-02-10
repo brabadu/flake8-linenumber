@@ -10,14 +10,14 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="flake8_linenumber",
     license="MIT",
-    version="0.1.4",
+    version="0.1.5",
     description="flake8 plugin to limit line number in a module",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Boryslav Larin",
     author_email="brabadu@gmail.com",
     url="https://github.com/brabadu/flake8-linenumber",
-    packages=setuptools.find_packages(),
+    py_modules=['flake8_linenumber'],
     install_requires=requires,
     entry_points={
         'flake8.extension': [
