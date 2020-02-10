@@ -17,9 +17,6 @@ setuptools.setup(
     entry_points={
         'flake8.extension': [
             'L001 = flake8_linenumber:LineNumberPlugin',
-        ],
-        'flake8.report': [
-            'linenumber = flake8_linenumber:LineNumberFromat',
         ]
     },
     classifiers=[
