@@ -34,7 +34,7 @@ class LineNumberPlugin:
     @classmethod
     def add_options(cls, options_manager):
         options_manager.add_option(
-            '--linenumbers',
+            '--linenumber',
             type='str',
             comma_separated_list=True,
             default=[],
@@ -44,7 +44,7 @@ class LineNumberPlugin:
 
     @classmethod
     def parse_options(cls, options):
-        cls.filesizes = config_parser(options.linenumbers)
+        cls.filesizes = config_parser(options.linenumber)
         cls.diff = options.diff
 
     def run(self):
