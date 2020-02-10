@@ -4,14 +4,19 @@ requires = [
     "flake8 > 3.0.0",
 ]
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setuptools.setup(
     name="flake8_linenumber",
     license="MIT",
-    version="0.1.1",
+    version="0.1.4",
     description="flake8 plugin to limit line number in a module",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Boryslav Larin",
     author_email="brabadu@gmail.com",
-    url="https://gitlab.com/brabadu/flake8_linenumber",
+    url="https://github.com/brabadu/flake8-linenumber",
     packages=setuptools.find_packages(),
     install_requires=requires,
     entry_points={
