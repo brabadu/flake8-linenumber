@@ -13,7 +13,7 @@ def config_parser(linenumber_config):
 
 class LineNumberPlugin:
     name = __name__
-    version = '0.1.7'
+    version = '0.1.8'
 
     def __init__(self, tree, total_lines, filename):
         self.total_lines = total_lines
@@ -27,6 +27,13 @@ class LineNumberPlugin:
     @classmethod
     def add_options(cls, options_manager):
         options_manager.add_option(
+            '--max-linenumber',
+            type='int',
+            default=None,
+            parse_from_config=True,
+            help='Default max line limit for a python module'
+        )
+        options_manager.add_option(
             '--linenumber',
             type='str',
             comma_separated_list=True,
@@ -39,9 +46,10 @@ class LineNumberPlugin:
     def parse_options(cls, options):
         cls.filesizes = config_parser(options.linenumber)
         cls.diff = options.diff
+        cls.default_limit = options.max_linenumber
 
     def run(self):
-        filesize_limit = self.filesizes.get(self.filename)
+        filesize_limit = self.filesizes.get(self.filename, self.default_limit)
 
         if filesize_limit and self.total_lines > filesize_limit:
             message = LineNumberErrors.L001.value.format(
