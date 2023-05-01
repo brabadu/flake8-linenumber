@@ -18,11 +18,12 @@ class LineNumberPlugin:
     def __init__(self, tree, total_lines, filename):
         self.total_lines = total_lines
         self.filename = Path(filename)
-        self.last_changed_lines = {
-            Path(f): max(changed_lines)
-            for f, changed_lines in parse_unified_diff().items()
-            if changed_lines
-        }
+        if self.diff:
+            self.last_changed_lines = {
+                Path(f): max(changed_lines)
+                for f, changed_lines in parse_unified_diff().items()
+                if changed_lines
+            }
 
     @classmethod
     def add_options(cls, options_manager):
